@@ -11,15 +11,15 @@
 //
 // See:
 // https://www.lutron.com/en-US/Products/Pages/WholeHomeSystems/RA2Select/Overview.aspx
+// https://www.lutron.com/TechnicalDocumentLibrary/040249.pdf (see: Pico Wireless Control)
 // https://github.com/homebridge/homebridge
-//
-// Additional device support can added by extending the 'Device' class
-// using the existing pattern and adding the appropriate hooks in the
-// 'Factory' class.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
 const { Telnet } = require('telnet-client')
+
+const pluginName = 'homebridge-ra2-select';
+const platformName = 'RA2Select';
 
 // GLOBALS - rather than passing them around (readonly)
 global.Homebridge = null;
@@ -36,7 +36,7 @@ module.exports = function(homebridge) {
     Characteristic = Homebridge.hap.Characteristic;
     UUIDGen = Homebridge.hap.uuid;
 
-    Homebridge.registerPlatform('homebridge-ra2-select', 'RA2Select', RA2Select, true);
+    Homebridge.registerPlatform(pluginName, platformName, RA2Select, true);
 }
 
 class RA2Select {
@@ -56,7 +56,7 @@ class RA2Select {
         Log('Loaded config');
 
         this.api = api;
-        this.discoveries = {};
+        this.existingDevices = {};
 
         // Listen for launch completion
         var platform = this;
@@ -74,7 +74,7 @@ class RA2Select {
         Log(`Configure Accessory: ${accessory.displayName} [${accessory.UUID}]`);
 
         // track that we've seen this accessory
-        this.discoveries[accessory.UUID] = accessory;
+        this.existingDevices[accessory.UUID] = accessory;
         accessory.reachable = false;
     }
 
@@ -95,12 +95,12 @@ class RA2Select {
         Log('Creating telnet connection...');
 
         const params = {
-            host: this.host,
-            username: this.username,
-            password: this.password,
-            loginPrompt: 'login: ',
+            host:           this.host,
+            username:       this.username,
+            password:       this.password,
+            loginPrompt:    'login: ',
             passwordPrompt: 'password: ',
-            shellPrompt: 'GNET> '
+            shellPrompt:    'GNET> '
         }
 
         let connection = new Telnet();
@@ -147,8 +147,8 @@ class RA2Select {
         const cmd = buffer.toString().split(',');
 
         // Received a DEVICE event. Parse the data into component pieces
-        // and handle if this a know button.
-        if (cmd[0] === '~DEVICE') {
+        // and handle if this a known button.
+        if (cmd[0] === '~DEVICE' && cmd.length === 4) {
             const deviceId = parseInt(cmd[1]);
             const buttonId = parseInt(cmd[2]);
             const actionNumber= parseInt(cmd[3]);
@@ -161,9 +161,9 @@ class RA2Select {
                     // Do we know about this button?
                     const button = device.buttons.find(({id}) => id === buttonId);
                     if (button) {
-                        // Handle this button press if it not an ignored button
+                        // Handle this button event if it not an ignored button
                         if (typeof button.ignore === 'undefined' || button.ignore === false) {
-                            this.handleButtonPress(device, button, actionNumber);
+                            this.handleButtonEvent(device, button, actionNumber);
                         }
                     } else {
                         Log(`RCV UNK: deviceId=${deviceId}, buttonId=${buttonId}, actionNumber=${actionNumber}`);
@@ -175,12 +175,11 @@ class RA2Select {
         }
     }
 
-    handleButtonPress(device, button, actionNumber) {
+    handleButtonEvent(device, button, actionNumber) {
         // PRESS
         if (actionNumber === 3) {
             Log(`RCV PRESS: \'[${device.id}:${button.id}\]' - (${button.name})`);
-            let service = button.accessory.getService(Service.StatelessProgrammableSwitch);
-            service.updateCharacteristic(Characteristic.ProgrammableSwitchEvent, Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS);
+            button.service.updateCharacteristic(Characteristic.ProgrammableSwitchEvent, Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS);
         }
 
         // RELEASE
@@ -207,86 +206,108 @@ class RA2Select {
         for (let i=0; i<this.devices.length; i++) {
             let device = this.devices[i];
 
+            if (typeof device.id === 'undefined') {
+                Log(`***** Device id MUST be configured`);
+                continue;
+            }
+
             if (device.ignore === true) {
                 Log(`Ignoring device ${device.id}`);
                 continue;
             }
 
+            if (typeof device.name === 'undefined') {
+                Log(`***** Name MUST be configured for ${device.id} if not ignored`);
+                continue;
+            }
+
             if (typeof device.buttons === 'undefined') {
-                Log(`No buttons configured for device ${device.id}`);
+                Log(`***** No buttons configured for device ${device.id}, ignoring`);
                 continue;
             }
 
             this.configureDevice(device);
         }
+
+        // Remove any previously cached devices we haven't recovered
+        for (var uuid in this.existingDevices) {
+            let accessory = this.existingDevices[uuid];
+            if (accessory) {
+                Log(`Deregister Accessory: ${accessory.displayName} [${accessory.UUID}]`);
+                this.api.unregisterPlatformAccessories(pluginName, platformName, [accessory]);
+            }
+        }
     }
 
     configureDevice(device) {
+        // Create a unique name for creating the UUID
+        let uuidName = `${device.name}-${device.id}`
+        let uuid = UUIDGen.generate(uuidName);
+
+        let discovered = this.existingDevices[uuid];
+
+        var accessory;
+        if (discovered) {
+            Log(`Existing: ${device.name} [${device.id}] [${uuid}]`);
+            accessory = discovered;
+            delete this.existingDevices[uuid];
+        } else {
+            Log(`Create: ${device.name} [${device.id}] [${uuid}]`);
+            accessory = new Accessory(device.name, uuid);
+        }
+        device.accessory = accessory;
+        
+        accessory.on('identify', () => {
+            Log(`***** IDENTIFY: ${device.name} [${device.id}]`);
+        });
+
+        // Configure buttons
         for (let i=0; i<device.buttons.length; i++) {
             let button = device.buttons[i];
+
+            if (typeof button.id === 'undefined') {
+                Log(`***** Ignore device ${device.id} button, button id MUST be configured`);
+                continue;
+            }
 
             if (button.ignore === true) {
                 Log(`Ignoring device ${device.id}, button ${button.id}`);
                 continue;
             }
 
-            this.configureButton(device, button);
+            if (typeof button.name === 'undefined') {
+                Log(`***** Ignore device ${device.id} button ${button.id}, name MUST be configured if not ignored`);
+                continue;
+            }
+
+            // Add service if it does not already exist
+            button.service = accessory.getServiceById(Service.StatelessProgrammableSwitch, button.name);
+            if (typeof button.service === 'undefined') {
+                Log(`add service [${device.id}:${button.id}]`);
+                button.service = accessory.addService(Service.StatelessProgrammableSwitch, `${device.name} ${button.name}`, button.name);
+            }
+
+            // Only single press available for now. Remove double press (1)
+            // and long press (2)
+            button.service
+                .getCharacteristic(Characteristic.ProgrammableSwitchEvent)
+                .setProps({ validValues: [0] })
+                .setProps({ maxValue: 0 });
         }
-    }
-
-    configureButton(device, button) {
-        Log(`Found device ${device.id}, button ${button.id}`);
-
-        // Create a unique name for creating the UUID
-        let uuidName = `${device.name}-${device.id}-${button.name}-${button.id}`
-        let uuid = UUIDGen.generate(uuidName);
-
-        
-        let discovered = this.discoveries[uuid];
-
-        var accessory;
-        if (discovered) {
-            Log(`Existing: ${device.id}:${button.id} [${uuid}]`);
-            accessory = discovered;
-        } else {
-            Log(`Create: ${device.id}:${button.id} [${uuid}]`);
-            accessory = new Accessory(button.name, uuid);
-        }
-        button.accessory = accessory;
-
-        accessory.on('identify', () => {
-            Log(`***** IDENTIFY: ${device.id}:${button.id}`);
-        });
-
-        // Add services
-        if (typeof discovered === 'undefined') {
-            Log('add service');
-            accessory.addService(Service.StatelessProgrammableSwitch, button.name);
-        }
-
-        // let service = accessory.getService(Service.StatelessProgrammableSwitch);
-
-        // // Add characteristics
-        // service
-        //     .getCharacteristic(Characteristic.ProgrammableSwitchEvent)
-        //     .on('get', (callback) => {
-        //         Log(`get state: ${device.id}:${button.id}`);
-        //         callback(null, Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS);
-        //     });
 
         // Add general accessory information
         accessory
             .getService(Service.AccessoryInformation)
             .updateCharacteristic(Characteristic.Manufacturer, 'Lutron')
             .updateCharacteristic(Characteristic.Model, 'Pico')
-            .updateCharacteristic(Characteristic.Name, `${button.name}`)
+            .updateCharacteristic(Characteristic.Name, `${device.name}`)
             .updateCharacteristic(Characteristic.SerialNumber, `${uuid}`);
 
         if (discovered) {
             accessory.reachable = true;
         } else {
             Log(`register accessory: ${accessory.displayName}`);
-            this.api.registerPlatformAccessories("homebridge-ra2-select", "RA2Select", [accessory]);
+            this.api.registerPlatformAccessories(pluginName, platformName, [accessory]);
         }
     }
 }

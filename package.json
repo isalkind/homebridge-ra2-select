@@ -1,0 +1,27 @@
+{
+  "name": "homebridge-ra2-select",
+  "version": "0.1.0",
+  "description": "Surface Pico remotes",
+  "license": "MIT",
+  "keywords": [
+    "homebridge-plugin",
+    "homebridge",
+    "lutron",
+    "pico",
+    "ra2"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/isalkind/homebridge-ra2-select.git"
+  },
+  "bugs": {
+    "url": "https://github.com/isalkind/homebridge-ra2-select/issues"
+  },
+  "engines": {
+    "node": ">=12.16.2",
+    "homebridge": ">=1.1.6"
+  },
+  "dependencies": {
+    "telnet-client": "^2.0.1"
+  }
+}
