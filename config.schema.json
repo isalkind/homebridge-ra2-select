@@ -1,0 +1,149 @@
+{
+    "pluginAlias": "RA2Select",
+    "pluginType": "platform",
+    "headerDisplay": "For detailed description of parameters, see: https://github.com/isalkind/homebridge-ra2-select",
+    "singular": true,
+    "schema": {
+      "type": "object",
+      "properties": {
+          "host": { "title": "Host", "type": "string", "required": true },
+          "username": { "title": "Username", "type": "string", "required": true },
+          "password": { "title": "Password", "type": "string", "required": true },
+          "devices": {
+              "title": "Device Information",
+              "type": "array",
+              "items": {
+                  "title": "Device Configuration",
+                  "type": "object",
+                  "properties": {
+                      "ignore": { "title": "Ignore this device", "type": "boolean", "required": false },
+                      "id": { "title": "Device Id", "type": "integer", "required": true },
+                      "name": { "title": "Device Name", "type": "string", "required": false},
+                      "buttons": {
+                          "title": "Button Information",
+                          "type": "array",
+                          "items": {
+                              "title": "Button Configuration",
+                              "type": "object",
+                              "properties": {
+                                  "ignore": { "title": "Ignore this button", "type": "boolean", "required": false },
+                                  "id": { "title": "Button Id", "type": "integer", "required": true },
+                                  "name": { "title": "Button Name", "type": "string", "required": false}
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      }
+    },
+    "layout": [
+      {
+          "type": "help",
+          "helpvalue": "<h5>RA2 Select Configuration</h5><em class='primary-text'>Enter required information for host or ipaddress, username, and password.</em>"
+      },
+      {
+          "type": "div",
+          "notitle": true,
+          "displayFlex": true,
+          "flex-direction": "row",
+          "flex-wrap": "wrap",
+          "items": [
+              {
+                  "key": "host",
+                  "flex-basis": "100%"
+              },
+              {
+                  "key": "username",
+                  "flex-basis": "50%"
+              },
+              {
+                  "key": "password",
+                  "flex-basis": "50%"
+              }
+          ]
+      },
+      {
+          "type": "fieldset",
+          "expandable": true,
+          "title": "Device Setup",
+          "items": [
+              {
+                  "type": "help",
+                  "helpvalue": "<h5>Device Configuration</h5><em class='primary-text'>Enter per-device information. Each device will appear with the given name in HomeKit.</em>"
+              },
+              {
+                  "key": "devices",
+                  "type": "array",
+                  "nodescription": true,
+                  "notitle": true,
+                  "items": [
+                      {
+                          "type": "div",
+                          "notitle": true,
+                          "displayFlex": true,
+                          "flex-direction": "row",
+                          "flex-wrap": "wrap",
+                          "items": [
+                              {
+                                  "key": "devices[].ignore",
+                                  "flex-basis": "100%"
+                              },
+                              {
+                                  "key": "devices[].id",
+                                  "flex-basis": "50%"
+                              },
+                              {
+                                  "key": "devices[].name",
+                                  "flex-basis": "50%"
+                              },
+                              {
+                                  "type": "fieldset",
+                                  "expandable": true,
+                                  "title": "Button Setup",
+                                  "items": [
+                                      {
+                                          "type": "help",
+                                          "helpvalue": "<h5>Button Configuration</h5><em class='primary-text'>Enter per-button information. Each button will be associated with the device in HomeKit.</em>"
+                                      },
+                                      {
+                                          "key": "devices[].buttons",
+                                          "type": "array",
+                                          "nodescription": true,
+                                          "notitle": true,
+                                          "items": [
+                                              {
+                                                  "type": "div",
+                                                  "notitle": true,
+                                                  "displayFlex": true,
+                                                  "flex-direction": "row",
+                                                  "flex-wrap": "wrap",
+                                                  "items": [
+                                                      {
+                                                          "key": "devices[].buttons[].ignore",
+                                                          "flex-basis": "100%"
+                                                      },
+                                                      {
+                                                          "key": "devices[].buttons[].id",
+                                                          "flex-basis": "50%"
+                                                      },
+                                                      {
+                                                          "key": "devices[].buttons[].name",
+                                                          "flex-basis": "50%"
+                                                      }
+                                                  ]
+                                              }
+                                          ]
+                                      }
+                                  ]
+                              }
+                          ]
+                      }
+                  ]
+              }
+          ]
+      }
+    ]
+}
+
+  

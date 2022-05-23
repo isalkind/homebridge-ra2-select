@@ -80,18 +80,18 @@ class RA2Select {
 
     // Called by Homebridge during startup after cached accessories
     // have been discovered.
-    didFinishLaunching() {
+    async didFinishLaunching() {
         Log('Did Finish Launching...');
 
         // Configure devices
         this.configureDevices();
 
         // Establish a telnet connection to the RA2 bridge
-        this.connection = this.createConnection();
+        this.connection = await this.createConnection();
     }
 
     // Configure and connect to the RA2 bridge via telnet
-    createConnection() {
+    async createConnection() {
         Log('Creating telnet connection...');
 
         const params = {
@@ -113,6 +113,7 @@ class RA2Select {
             Log(`RCV READY. PROMPT: ${prompt}`);
         });
 
+        // Data received from the bridge
         connection.on('data', buffer => {
             this.processReceivedData(buffer);
         });
@@ -133,11 +134,16 @@ class RA2Select {
             Log('RCV END');
         })
 
-        connection.on('close', () => {
-            Log('RCV CLOSE');
+        // Connection has closed, must be reopened
+        connection.on('close', async () => {
+            Log('RCV CLOSE: reopening...');
+
+            // Re-establish a telnet connection to the RA2 bridge
+            await this.connection.destroy();
+            this.connection = await this.createConnection();
         });
 
-        connection.connect(params);
+        await connection.connect(params);
 
         return connection;
     }
@@ -157,7 +163,7 @@ class RA2Select {
             const device = this.devices.find(({id}) => id === deviceId);
             if (device) {
                 // Not an ignored device, look for button definition
-                if (typeof device.ignore === 'undefined' || device.ignore === false) {
+                if ((typeof device.ignore === 'undefined' || device.ignore === false) && device.buttons) {
                     // Do we know about this button?
                     const button = device.buttons.find(({id}) => id === buttonId);
                     if (button) {
@@ -168,6 +174,8 @@ class RA2Select {
                     } else {
                         Log(`RCV UNK: deviceId=${deviceId}, buttonId=${buttonId}, actionNumber=${actionNumber}`);
                     }
+                } else {
+                    Log(`RCV UNK: deviceId=${deviceId}, buttonId=${buttonId}, actionNumber=${actionNumber}`);
                 }
             } else {
                 Log(`RCV UNK: deviceId=${deviceId}, buttonId=${buttonId}, actionNumber=${actionNumber}`);
