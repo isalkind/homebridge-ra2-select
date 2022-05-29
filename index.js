@@ -16,7 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-const { Telnet } = require('telnet-client')
+const { Telnet } = require('telnet-client');
+const Pico = require('./Pico');
 
 const pluginName = 'homebridge-ra2-select';
 const platformName = 'RA2Select';
@@ -28,6 +29,8 @@ global.Service = null;
 global.Characteristic = null;
 global.UUIDGen = null;
 global.Log = null;
+global.Config = null;
+global.ExistingDevices = null;
 
 module.exports = function(homebridge) {
     Homebridge = homebridge;
@@ -46,6 +49,8 @@ class RA2Select {
     //
     constructor(log, config, api) {
         Log = log;
+        Config = config;
+        ExistingDevices = {};
 
         // Read config params
         this.username = config['username'];
@@ -56,7 +61,7 @@ class RA2Select {
         Log('Loaded config');
 
         this.api = api;
-        this.existingDevices = {};
+        this.picos = [];
 
         // Listen for launch completion
         var platform = this;
@@ -74,7 +79,7 @@ class RA2Select {
         Log(`Configure Accessory: ${accessory.displayName} [${accessory.UUID}]`);
 
         // track that we've seen this accessory
-        this.existingDevices[accessory.UUID] = accessory;
+        ExistingDevices[accessory.UUID] = accessory;
         accessory.reachable = false;
     }
 
@@ -160,44 +165,12 @@ class RA2Select {
             const actionNumber= parseInt(cmd[3]);
 
             // Do we know about this device?
-            const device = this.devices.find(({id}) => id === deviceId);
+            const device = this.picos.find(({id}) => id === deviceId);
             if (device) {
-                // Not an ignored device, look for button definition
-                if ((typeof device.ignore === 'undefined' || device.ignore === false) && device.buttons) {
-                    // Do we know about this button?
-                    const button = device.buttons.find(({id}) => id === buttonId);
-                    if (button) {
-                        // Handle this button event if it not an ignored button
-                        if (typeof button.ignore === 'undefined' || button.ignore === false) {
-                            this.handleButtonEvent(device, button, actionNumber);
-                        }
-                    } else {
-                        Log(`RCV UNK: deviceId=${deviceId}, buttonId=${buttonId}, actionNumber=${actionNumber}`);
-                    }
-                } else {
-                    Log(`RCV UNK: deviceId=${deviceId}, buttonId=${buttonId}, actionNumber=${actionNumber}`);
-                }
+                device.event(buttonId, actionNumber);
             } else {
                 Log(`RCV UNK: deviceId=${deviceId}, buttonId=${buttonId}, actionNumber=${actionNumber}`);
             }
-        }
-    }
-
-    handleButtonEvent(device, button, actionNumber) {
-        // PRESS
-        if (actionNumber === 3) {
-            Log(`RCV PRESS: \'[${device.id}:${button.id}\]' - (${button.name})`);
-            button.service.updateCharacteristic(Characteristic.ProgrammableSwitchEvent, Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS);
-        }
-
-        // RELEASE
-        else if (actionNumber === 4) {
-            Log(`RCV RELEASE: \'[${device.id}:${button.id}\]' - (${button.name})`);
-        }
-
-        // ????
-        else {
-            Log(`RCV UNKNOWN: \'[${device.id}:${button.id}\]' - (${button.name}) - |${actionNumber}|`);
         }
     }
 
@@ -214,108 +187,22 @@ class RA2Select {
         for (let i=0; i<this.devices.length; i++) {
             let device = this.devices[i];
 
-            if (typeof device.id === 'undefined') {
-                Log(`***** Device id MUST be configured`);
-                continue;
+            try {
+                let pico = new Pico(this.api, device);
+                this.picos.push(pico);
+                Log(`Created Pico: id=${pico.id}, ignore=${pico.ignore}`);
+            } catch (e) {
+                Log(`FAILED TO CREATE PICO: ${e}`);
             }
-
-            if (device.ignore === true) {
-                Log(`Ignoring device ${device.id}`);
-                continue;
-            }
-
-            if (typeof device.name === 'undefined') {
-                Log(`***** Name MUST be configured for ${device.id} if not ignored`);
-                continue;
-            }
-
-            if (typeof device.buttons === 'undefined') {
-                Log(`***** No buttons configured for device ${device.id}, ignoring`);
-                continue;
-            }
-
-            this.configureDevice(device);
         }
 
         // Remove any previously cached devices we haven't recovered
-        for (var uuid in this.existingDevices) {
-            let accessory = this.existingDevices[uuid];
+        for (var uuid in ExistingDevices) {
+            let accessory = ExistingDevices[uuid];
             if (accessory) {
                 Log(`Deregister Accessory: ${accessory.displayName} [${accessory.UUID}]`);
                 this.api.unregisterPlatformAccessories(pluginName, platformName, [accessory]);
             }
-        }
-    }
-
-    configureDevice(device) {
-        // Create a unique name for creating the UUID
-        let uuidName = `${device.name}-${device.id}`
-        let uuid = UUIDGen.generate(uuidName);
-
-        let discovered = this.existingDevices[uuid];
-
-        var accessory;
-        if (discovered) {
-            Log(`Existing: ${device.name} [${device.id}] [${uuid}]`);
-            accessory = discovered;
-            delete this.existingDevices[uuid];
-        } else {
-            Log(`Create: ${device.name} [${device.id}] [${uuid}]`);
-            accessory = new Accessory(device.name, uuid);
-        }
-        device.accessory = accessory;
-        
-        accessory.on('identify', () => {
-            Log(`***** IDENTIFY: ${device.name} [${device.id}]`);
-        });
-
-        // Configure buttons
-        for (let i=0; i<device.buttons.length; i++) {
-            let button = device.buttons[i];
-
-            if (typeof button.id === 'undefined') {
-                Log(`***** Ignore device ${device.id} button, button id MUST be configured`);
-                continue;
-            }
-
-            if (button.ignore === true) {
-                Log(`Ignoring device ${device.id}, button ${button.id}`);
-                continue;
-            }
-
-            if (typeof button.name === 'undefined') {
-                Log(`***** Ignore device ${device.id} button ${button.id}, name MUST be configured if not ignored`);
-                continue;
-            }
-
-            // Add service if it does not already exist
-            button.service = accessory.getServiceById(Service.StatelessProgrammableSwitch, button.name);
-            if (typeof button.service === 'undefined') {
-                Log(`add service [${device.id}:${button.id}]`);
-                button.service = accessory.addService(Service.StatelessProgrammableSwitch, `${device.name} ${button.name}`, button.name);
-            }
-
-            // Only single press available for now. Remove double press (1)
-            // and long press (2)
-            button.service
-                .getCharacteristic(Characteristic.ProgrammableSwitchEvent)
-                .setProps({ validValues: [0] })
-                .setProps({ maxValue: 0 });
-        }
-
-        // Add general accessory information
-        accessory
-            .getService(Service.AccessoryInformation)
-            .updateCharacteristic(Characteristic.Manufacturer, 'Lutron')
-            .updateCharacteristic(Characteristic.Model, 'Pico')
-            .updateCharacteristic(Characteristic.Name, `${device.name}`)
-            .updateCharacteristic(Characteristic.SerialNumber, `${uuid}`);
-
-        if (discovered) {
-            accessory.reachable = true;
-        } else {
-            Log(`register accessory: ${accessory.displayName}`);
-            this.api.registerPlatformAccessories(pluginName, platformName, [accessory]);
         }
     }
 }
