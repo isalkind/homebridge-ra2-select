@@ -4,39 +4,47 @@
     "headerDisplay": "For detailed description of parameters, see: https://github.com/isalkind/homebridge-ra2-select",
     "singular": true,
     "schema": {
-        "type": "object",
-        "properties": {
-            "host": { "title": "Host", "type": "string", "required": true },
-            "username": { "title": "Username", "type": "string", "required": true },
-            "password": { "title": "Password", "type": "string", "required": true },
-            "devices": {
-                "title": "Device Information",
-                "type": "array",
-                "items": {
-                    "title": "Device Configuration",
-                    "type": "object",
-                    "properties": {
-                        "ignore": { "title": "Ignore this device", "type": "boolean", "required": false },
-                        "id": { "title": "Device Id", "type": "integer", "required": true },
-                        "name": { "title": "Device Name", "type": "string", "required": false},
-                        "buttons": {
-                            "title": "Button Information",
-                            "type": "array",
-                            "items": {
-                                "title": "Button Configuration",
-                                "type": "object",
-                                "properties": {
-                                    "ignore": { "title": "Ignore this button", "type": "boolean", "required": false },
-                                    "singlePressOnly": { "title": "Single press only", "type": "boolean", "required": false },
-                                    "id": { "title": "Button Id", "type": "integer", "required": true },
-                                    "name": { "title": "Button Name", "type": "string", "required": false}
-                                }
-                            }
-                        }
+        "definitions": {
+            "button_obj": {
+                "type": "object",
+                "title": "Button Configuration",
+                "properties": {
+                    "ignore": { "title": "Ignore this button", "type": "boolean" },
+                    "singlePressOnly": { "title": "Restrict to single press", "type": "boolean" },
+                    "id": { "title": "Button Id", "type": "integer", "minimum": 1, "required": true },
+                    "name": { "title": "Button Name", "type": "string" }
+                },
+                "required": [ "id" ]
+            },
+            "device_obj": {
+                "type": "object",
+                "title": "Device Configuration",
+                "properties": {
+                    "ignore": { "title": "Ignore this device", "type": "boolean" },
+                    "id": { "title": "Device Id", "type": "integer", "minimum": 1 },
+                    "name": { "title": "Device Name", "type": "string" },
+                    "buttons": {
+                        "type": "array",
+                        "title": "Buttons",
+                        "items": { "$ref": "#/definitions/button_obj" }
                     }
-                }
+                },
+                "required": [ "id" ]
             }
-        }
+        },
+        "type": "object",
+        "title": "Configuration",
+        "properties": {
+            "host": { "title": "Host", "type": "string"  },
+            "username": { "title": "Username", "type": "string"  },
+            "password": { "title": "Password", "type": "string"  },
+            "devices": {
+                "type": "array",
+                "title": "Devices",
+                "items": { "$ref": "#/definitions/device_obj" }
+            }
+        },
+        "required": [ "host", "username", "password" ]
     },
     "layout": [
         {
