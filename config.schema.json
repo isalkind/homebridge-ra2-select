@@ -27,6 +27,7 @@
                                 "type": "object",
                                 "properties": {
                                     "ignore": { "title": "Ignore this button", "type": "boolean", "required": false },
+                                    "singlePressOnly": { "title": "Single press only", "type": "boolean", "required": false },
                                     "id": { "title": "Button Id", "type": "integer", "required": true },
                                     "name": { "title": "Button Name", "type": "string", "required": false}
                                 }
@@ -121,7 +122,11 @@
                                                     "items": [
                                                         {
                                                             "key": "devices[].buttons[].ignore",
-                                                            "flex-basis": "100%"
+                                                            "flex-basis": "50%"
+                                                        },
+                                                        {
+                                                            "key": "devices[].buttons[].singlePressOnly",
+                                                            "flex-basis": "50%"
                                                         },
                                                         {
                                                             "key": "devices[].buttons[].id",
