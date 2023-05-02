@@ -2,7 +2,7 @@
     "pluginAlias": "RA2Select",
     "pluginType": "platform",
     "headerDisplay": "For detailed description of parameters, see: https://github.com/isalkind/homebridge-ra2-select",
-    "singular": true,
+    "singular": false,
     "schema": {
         "definitions": {
             "button_obj": {

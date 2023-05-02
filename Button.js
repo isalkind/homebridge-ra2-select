@@ -108,6 +108,9 @@ class Button {
             this.service = device.accessory.addService(Service.StatelessProgrammableSwitch, `${device.name} ${this.name}`, this.name);
         }
 
+        this.service.addOptionalCharacteristic(Characteristic.ConfiguredName);
+        this.service.setCharacteristic(Characteristic.ConfiguredName, this.name);
+
         // Configure to handle only single press
         if (this.singlePressOnly) {
             this.service

@@ -1,6 +1,6 @@
 # homebridge-ra2-select
 
-A [Homebridge](https://homebridge.io) plugin for Lutron RA2 Select devices.
+A [Homebridge](https://homebridge.io) plugin for Lutron RA2 Select devices. This plugin **does not** provide support for Lutron Radio RA2 devices.
 
 This plugin currently has one purpose: allow [Lutron Pico remotes](https://www.lutron.com/en-US/Products/Pages/Components/PicoWirelessController/Overview.aspx) to control HomeKit devices outside of the Lutron ecosystem.
 
@@ -22,16 +22,11 @@ It is expected that any other Pico remote that is identified as being compatible
 
 ### Other Bridges
 
-> It is possible that this plugin may work with other Lutron bridges besides just the RA2 Select, but it has not been tested.
+> It is possible that this plugin may work with other Lutron bridges besides just the RA2 Select, but it has not been tested, nor will it be supported.
 
 ## Supported Features
 
-Pico remotes are surfaced in HomeKit as Stateless Programable Switches with buttons that provide single press support.
-
-### Future
-
-* Add support for double press and long press.
-* Add support for treating buttons as contact sensors.
+Pico remotes are surfaced in HomeKit as Stateless Programable Switches with buttons that provide single, double, and long press support.
 
 # Installation
 
@@ -47,15 +42,23 @@ npm -g install homebridge-ra2-select
 
 Configuration of your hardware requires the [Lutron App](https://apps.apple.com/us/app/lutron-app/id886753021).
 
+## Add the RA2 Select as a Hub/Bridge
+
+Follow the manufacturer's instructions to add the bridge to your HomeKit setup if necessary. XXX - Find link to instructions
+
 ## Enable Telnet
 
 This plugin uses Telnet to communicate with the RA2 Select devices. By default, the RA2 Select has Telnet access disabled. To enable access:
 
 `Lutron App / Settings / Advanced / Integration / Telnet Support` --> Toggle on.
 
-## Add a Pico
+## Add a New Pico
 
 `Lutron App / Settings / Add Device` --> Follow the instructions.
+
+## Use an Existing Pico
+
+XXX - instructions to dissassociate from existing control
 
 # Configuration
 
@@ -133,7 +136,7 @@ Ex: config.json - After device and button discovery
 | ------------- | ------------- | -------- |
 | id | Button identifier of Pico remote button | yes |
 | ignore | Ignore this button (true/false). An ignored button is excluded from logging and HomeKit exposure.<br><br>Defaults to false. |
-| name | Assigned button name. If 'ignore' is true, then this parameter is not required. If 'ignore' is false, then this parameter is required and becomes the name of a button associated with the Stateless Programable Switch exposed to HomeKit.<br><br>Note: The Home app does not expose the names of the buttons, which simply show up as "Button 1", "Button 2", etc. Other apps (ex: Eve) expose the button names. | if `ignore` is false |
+| name | Assigned button name. If 'ignore' is true, then this parameter is not required. If 'ignore' is false, then this parameter is required and becomes the name of a button associated with the Stateless Programable Switch exposed to HomeKit.<br><br>Note: The Home app does not expose the names of the buttons, which simply show up as "Button 1", "Button 2", etc. in no particular order. Other apps (ex: Eve) expose the button names. | if `ignore` is false |
 
 # Identifying Device and Button Ids
 
