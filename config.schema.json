@@ -21,6 +21,7 @@
                 "title": "Device Configuration",
                 "properties": {
                     "ignore": { "title": "Ignore this device", "type": "boolean" },
+                    "logging": { "title": "Verbose logging", "type": "boolean" },
                     "id": { "title": "Device Id", "type": "integer", "minimum": 1 },
                     "name": { "title": "Device Name", "type": "string" },
                     "buttons": {
@@ -96,7 +97,11 @@
                             "items": [
                                 {
                                     "key": "devices[].ignore",
-                                    "flex-basis": "100%"
+                                    "flex-basis": "50%"
+                                },
+                                {
+                                    "key": "devices[].logging",
+                                    "flex-basis": "50%"
                                 },
                                 {
                                     "key": "devices[].id",

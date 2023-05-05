@@ -81,7 +81,7 @@ class Button {
         this.ignore = false;
 
         if (buttonConfig.ignore === true) {
-            Log(`Ignoring device ${device.id}, button ${this.id}`);
+            LogDetail(this.device.logging, `Ignoring device ${device.id}, button ${this.id}`);
             this.ignore = true;
             return;
         }
@@ -104,7 +104,7 @@ class Button {
         // Add service if it does not already exist
         this.service = device.accessory.getServiceById(Service.StatelessProgrammableSwitch, this.name);
         if (typeof this.service === 'undefined') {
-            Log(`add service [${device.id}:${this.id}]`);
+            LogDetail(this.device.logging, `add service [${device.id}:${this.id}]`);
             this.service = device.accessory.addService(Service.StatelessProgrammableSwitch, `${device.name} ${this.name}`, this.name);
         }
 
@@ -133,7 +133,7 @@ class Button {
         // expected params).
         this.stateMachine.onChange.add(function(state, data, action) {
             let prevState = this.stateMachine.previousState ? this.stateMachine.previousState.name : '()';
-            Log(`[${this.device.id}:${this.id}] ${action}: ${prevState} --> ${state.name} (${this.device.name}::${this.name})`);
+            LogDetail(this.device.logging, `[${this.device.id}:${this.id}] ${action}: ${prevState} --> ${state.name} (${this.device.name}::${this.name})`);
         }.bind(this));
 
         this.stateMachine.onEnter.add(function(state, data, action) {
@@ -224,12 +224,12 @@ class Button {
                 break;
 
             case Action.TIMEOUT_LONG:
-                Log('SEND: Long Press');
+                LogDetail(this.device.logging, 'SEND: Long Press');
                 this.service.updateCharacteristic(Characteristic.ProgrammableSwitchEvent, Characteristic.ProgrammableSwitchEvent.LONG_PRESS);
                 break;
 
             case Action.SINGLE_ONLY:
-                Log('SEND: Single Press');
+                LogDetail(this.device.logging, 'SEND: Single Press');
                 this.service.updateCharacteristic(Characteristic.ProgrammableSwitchEvent, Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS);
                 break;
         }
@@ -248,12 +248,12 @@ class Button {
     stateWaitSingleTimeoutExit(action) {
         switch (action) {
             case Action.TIMEOUT_SINGLE:
-                Log('SEND: Single Press');
+                LogDetail(this.device.logging, 'SEND: Single Press');
                 this.service.updateCharacteristic(Characteristic.ProgrammableSwitchEvent, Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS);
                 break;
 
             case Action.PRESS:
-                Log('SEND: Double Press');
+                LogDetail(this.device.logging, 'SEND: Double Press');
                 this.service.updateCharacteristic(Characteristic.ProgrammableSwitchEvent, Characteristic.ProgrammableSwitchEvent.DOUBLE_PRESS);
                 clearTimeout(this.timer1);
                 this.timer1 = null;

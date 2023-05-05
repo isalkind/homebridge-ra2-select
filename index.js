@@ -29,6 +29,7 @@ global.Service = null;
 global.Characteristic = null;
 global.UUIDGen = null;
 global.Log = null;
+global.LogDetail = null;
 global.Config = null;
 global.ExistingDevices = null;
 
@@ -42,6 +43,12 @@ module.exports = function(homebridge) {
     Homebridge.registerPlatform(pluginName, platformName, RA2Select, true);
 }
 
+function logDetail(log, msg) {
+    if (log) {
+        Log(msg);
+    }
+}
+
 class RA2Select {
 
     //
@@ -49,6 +56,7 @@ class RA2Select {
     //
     constructor(log, config, api) {
         Log = log;
+        LogDetail = logDetail;
         Config = config;
         ExistingDevices = {};
 

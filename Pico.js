@@ -21,11 +21,12 @@ class Pico {
 
         this.id = deviceConfig.id;
         this.ignore = false;
+        this.logging = deviceConfig.logging || false;
         this.buttons = [];
 
         // Ignored device
         if (deviceConfig.ignore === true) {
-            Log(`Ignoring device ${deviceConfig.id}`);
+            LogDetail(this.logging, `Ignoring device ${deviceConfig.id}`);
             this.ignore = true;
             return;
         }
@@ -39,7 +40,7 @@ class Pico {
 
         // Check for buttons
         if (typeof deviceConfig.buttons === 'undefined') {
-            Log(`***** No buttons configured for device ${deviceConfig.id}, ignoring`);
+            LogDetail(this.logging, `***** No buttons configured for device ${deviceConfig.id}, ignoring`);
             this.ignore = true;
             return;
         }
@@ -62,11 +63,11 @@ class Pico {
 
         var accessory;
         if (discovered) {
-            Log(`Existing: ${this.name} [${this.id}] [${uuid}]`);
+            LogDetail(this.logging, `Existing: ${this.name} [${this.id}] [${uuid}]`);
             accessory = discovered;
             delete ExistingDevices[uuid];
         } else {
-            Log(`Create: ${this.name} [${this.id}] [${uuid}]`);
+            LogDetail(this.logging, `Create: ${this.name} [${this.id}] [${uuid}]`);
             accessory = new Accessory(this.name, uuid);
         }
         this.accessory = accessory;
@@ -92,7 +93,7 @@ class Pico {
         if (discovered) {
             accessory.reachable = true;
         } else {
-            Log(`register accessory: ${accessory.displayName}`);
+            LogDetail(this.logging, `register accessory: ${accessory.displayName}`);
             api.registerPlatformAccessories(pluginName, platformName, [accessory]);
         }
     }
@@ -109,7 +110,7 @@ class Pico {
         if (button) {
             button.event(actionNumber);
         } else {
-            Log(`RCV UNK BUTTON: deviceId=${this.id}, buttonId=${buttonId}, actionNumber=${actionNumber}`);
+            LogDetail(this.logging, `RCV UNK BUTTON: deviceId=${this.id}, buttonId=${buttonId}, actionNumber=${actionNumber}`);
         }
     }
 }

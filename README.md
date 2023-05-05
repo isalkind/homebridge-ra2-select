@@ -129,6 +129,7 @@ Ex: config.json - After device and button discovery
 | ignore | Ignore this device (true/false). An ignored device is excluded from logging and HomeKit exposure.<br><br>Defaults to false. |
 | name | Assigned device name. If 'ignore' is true, then this parameter is not required. If 'ignore' is false, then this parameter is required and becomes the name of the Stateless Programable Switch exposed to HomeKit. | if `ignore` is false |
 | buttons | Array of buttons. See "Buttons" section. |
+| logging | Output detailed log information (true/false) for this device (and any of its buttons). <br><br>Defaults to false.
 
 ### Buttons
 
