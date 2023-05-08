@@ -7,161 +7,41 @@
         "definitions": {
             "button_obj": {
                 "type": "object",
-                "title": "Button Configuration",
+                "title": "Button",
                 "properties": {
                     "ignore": { "title": "Ignore this button", "type": "boolean" },
                     "singlePressOnly": { "title": "Restrict to single press", "type": "boolean" },
                     "id": { "title": "Button Id", "type": "integer", "minimum": 1, "required": true },
                     "name": { "title": "Button Name", "type": "string" }
-                },
-                "required": [ "id" ]
+                }
             },
             "device_obj": {
                 "type": "object",
-                "title": "Device Configuration",
+                "title": "Device",
                 "properties": {
                     "ignore": { "title": "Ignore this device", "type": "boolean" },
                     "logging": { "title": "Verbose logging", "type": "boolean" },
-                    "id": { "title": "Device Id", "type": "integer", "minimum": 1 },
+                    "id": { "title": "Device Id", "type": "integer", "minimum": 1, "required": true },
                     "name": { "title": "Device Name", "type": "string" },
                     "buttons": {
                         "type": "array",
                         "title": "Buttons",
                         "items": { "$ref": "#/definitions/button_obj" }
                     }
-                },
-                "required": [ "id" ]
+                }
             }
         },
         "type": "object",
         "title": "Configuration",
         "properties": {
-            "host": { "title": "Host", "type": "string"  },
-            "username": { "title": "Username", "type": "string"  },
-            "password": { "title": "Password", "type": "string"  },
+            "host": { "title": "Host", "description": "Hostname or IP address", "type": "string", "required": true },
+            "username": { "title": "Username", "type": "string", "default": "lutron", "required": true },
+            "password": { "title": "Password", "type": "string", "default": "integration", "required": true },
             "devices": {
                 "type": "array",
                 "title": "Devices",
                 "items": { "$ref": "#/definitions/device_obj" }
             }
-        },
-        "required": [ "host", "username", "password" ]
-    },
-    "layout": [
-        {
-            "type": "help",
-            "helpvalue": "<h5>RA2 Select Configuration</h5><em class='primary-text'>Enter required information for host or ipaddress, username, and password.</em>"
-        },
-        {
-            "type": "div",
-            "notitle": true,
-            "displayFlex": true,
-            "flex-direction": "row",
-            "flex-wrap": "wrap",
-            "items": [
-                {
-                    "key": "host",
-                    "flex-basis": "100%"
-                },
-                {
-                    "key": "username",
-                    "flex-basis": "50%"
-                },
-                {
-                    "key": "password",
-                    "flex-basis": "50%"
-                }
-            ]
-        },
-        {
-            "type": "fieldset",
-            "expandable": true,
-            "title": "Device Setup",
-            "items": [
-                {
-                    "type": "help",
-                    "helpvalue": "<h5>Device Configuration</h5><em class='primary-text'>Enter per-device information. Each device will appear with the given name in HomeKit.</em>"
-                },
-                {
-                    "key": "devices",
-                    "type": "array",
-                    "nodescription": true,
-                    "notitle": true,
-                    "items": [
-                        {
-                            "type": "div",
-                            "notitle": true,
-                            "displayFlex": true,
-                            "flex-direction": "row",
-                            "flex-wrap": "wrap",
-                            "items": [
-                                {
-                                    "key": "devices[].ignore",
-                                    "flex-basis": "50%"
-                                },
-                                {
-                                    "key": "devices[].logging",
-                                    "flex-basis": "50%"
-                                },
-                                {
-                                    "key": "devices[].id",
-                                    "flex-basis": "50%"
-                                },
-                                {
-                                    "key": "devices[].name",
-                                    "flex-basis": "50%"
-                                },
-                                {
-                                    "type": "fieldset",
-                                    "expandable": true,
-                                    "title": "Button Setup",
-                                    "items": [
-                                        {
-                                            "type": "help",
-                                            "helpvalue": "<h5>Button Configuration</h5><em class='primary-text'>Enter per-button information. Each button will be associated with the device in HomeKit.</em>"
-                                        },
-                                        {
-                                            "key": "devices[].buttons",
-                                            "type": "array",
-                                            "nodescription": true,
-                                            "notitle": true,
-                                            "items": [
-                                                {
-                                                    "type": "div",
-                                                    "notitle": true,
-                                                    "displayFlex": true,
-                                                    "flex-direction": "row",
-                                                    "flex-wrap": "wrap",
-                                                    "items": [
-                                                        {
-                                                            "key": "devices[].buttons[].ignore",
-                                                            "flex-basis": "50%"
-                                                        },
-                                                        {
-                                                            "key": "devices[].buttons[].singlePressOnly",
-                                                            "flex-basis": "50%"
-                                                        },
-                                                        {
-                                                            "key": "devices[].buttons[].id",
-                                                            "flex-basis": "50%"
-                                                        },
-                                                        {
-                                                            "key": "devices[].buttons[].name",
-                                                            "flex-basis": "50%"
-                                                        }
-                                                    ]
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
         }
-    ]
+    }
 }
-
-  
