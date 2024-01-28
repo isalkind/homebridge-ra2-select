@@ -66,7 +66,7 @@ Disassociate the existing Pico from controlling Lutron devices directly:
 
 Start with the starter config. You will use this simple configuration to identify the device and button information needed to complete the configuration. See the [Identifying Device and Button Ids](#identifying-device-and-button-ids) section below.
 
-Ex: config.json - Starter config
+Ex: config.json - Starter config - replace values as appropriate
 
 ```json
 {
@@ -131,18 +131,20 @@ Ex: config.json - After device and button discovery
 | Param         | Description   | Required  |
 | ------------- | ------------- | -------- |
 | id | Device identifier of the Pico remote | yes |
-| ignore | Ignore this device (true/false). An ignored device is excluded from logging and HomeKit exposure.<br><br>Defaults to false. |
+| ignore | Ignore this device (true/false). An ignored device is excluded from logging and HomeKit exposure.<br><br>Defaults to false. | no |
 | name | Assigned device name. If 'ignore' is true, then this parameter is not required. If 'ignore' is false, then this parameter is required and becomes the name of the Stateless Programable Switch exposed to HomeKit. | if `ignore` is false |
-| buttons | Array of buttons. See [Buttons](#buttons) section. |
-| logging | Output detailed log information (true/false) for this device (and any of its buttons).<br><br>Defaults to false. |
+| buttons | Array of buttons. See [Buttons](#buttons) section. | no |
+| logging | Output detailed log information (true/false) for this device (and any of its buttons).<br><br>Defaults to false. | no |
+| singlePressOnly | All buttons on the device are configured to be single press only buttons and will imediately respond to a press without delay.<br><br>Defaults to false. | no |
 
 #### Buttons
 
 | Param         | Description   | Required  |
 | ------------- | ------------- | -------- |
 | id | Button identifier of Pico remote button | yes |
-| ignore | Ignore this button (true/false). An ignored button is excluded from logging and HomeKit exposure.<br><br>Defaults to false. |
+| ignore | Ignore this button (true/false). An ignored button is excluded from logging and HomeKit exposure.<br><br>Defaults to false. | no |
 | name | Assigned button name. If 'ignore' is true, then this parameter is not required. If 'ignore' is false, then this parameter is required and becomes the name of a button associated with the Stateless Programable Switch exposed to HomeKit.<br><br>Note: The Home app does not expose the names of the buttons, which simply show up as "Button 1", "Button 2", etc. in no particular order. Other apps (ex: Eve) expose the button names. | if `ignore` is false |
+| singlePressOnly | The buttons is configured to be a single press only button and will immediately respond to a press without delay.<br><br>Defaults to false. | no |
 
 ## Identifying Device and Button Ids
 
