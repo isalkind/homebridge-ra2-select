@@ -1,6 +1,6 @@
 {
   "name": "homebridge-ra2-select",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Surface Pico remotes",
   "license": "MIT",
   "keywords": [
@@ -24,5 +24,9 @@
   "dependencies": {
     "telnet-client": "^2.0.1",
     "state-machine-js": "^0.0.7"
+  },
+  "funding": {
+    "type": "paypal",
+    "url": "https://paypal.me/isalkind"
   }
 }
