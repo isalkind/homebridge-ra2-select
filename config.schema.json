@@ -1,7 +1,7 @@
 {
     "pluginAlias": "RA2Select",
     "pluginType": "platform",
-    "headerDisplay": "For detailed description of parameters, see: https://github.com/isalkind/homebridge-ra2-select",
+    "headerDisplay": "For detailed description of parameters, see: [homebridge-ra2-select configuration](https://github.com/isalkind/homebridge-ra2-select#configuration)",
     "singular": false,
     "schema": {
         "definitions": {
