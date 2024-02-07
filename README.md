@@ -1,5 +1,9 @@
 # homebridge-ra2-select
 
+[![mit license](https://badgen.net/badge/license/MIT/red)](https://github.com/isalkind/homebridge-ra2-select/blob/master/LICENSE)
+[![npm](https://badgen.net/npm/dt/homebridge-ra2-select)](https://www.npmjs.com/package/homebridge-ra2-select)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/isalkind)
+
 A [Homebridge](https://homebridge.io) plugin for [**Lutron RA2 Select**](https://www.lutron.com/en-US/Products/Pages/WholeHomeSystems/RA2Select/Overview.aspx) devices. This plugin **does not** provide support for Lutron Radio RA2 devices.
 
 This plugin currently has one purpose: allow [**Lutron Pico remotes**](https://www.lutron.com/en-US/Products/Pages/Components/PicoWirelessController/Overview.aspx) to control HomeKit devices outside of the Lutron ecosystem.
@@ -63,6 +67,8 @@ Disassociate the existing Pico from controlling Lutron devices directly:
 `Lutron App / <Existing Pico> / Edit Device / Devices` --> Unselect all devices
 
 ## Configuration
+
+For the best experience configuring this plugin, please use [homebridge-config-ui-x](https://www.npmjs.com/package/homebridge-config-ui-x).
 
 Start with the starter config. You will use this simple configuration to identify the device and button information needed to complete the configuration. See the [Identifying Device and Button Ids](#identifying-device-and-button-ids) section below.
 
