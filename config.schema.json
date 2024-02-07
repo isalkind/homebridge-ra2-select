@@ -1,0 +1,118 @@
+{
+    "pluginAlias": "RA2Select",
+    "pluginType": "platform",
+    "headerDisplay": "For detailed description of parameters, see: https://github.com/isalkind/homebridge-ra2-select",
+    "singular": false,
+    "schema": {
+        "definitions": {
+            "device_obj": {
+                "type": "object",
+                "title": "Device Configuration",
+                "properties": {
+                    "ignore": {
+                        "title": "Ignore this device",
+                        "type": "boolean"
+                    },
+                    "id": {
+                        "title": "Device Id",
+                        "type": "integer",
+                        "minimum": 1
+                    },
+                    "name": {
+                        "title": "Device Name",
+                        "type": "string"
+                    },
+                    "singlePressOnly": {
+                        "title": "Restrict to single press",
+                        "type": "boolean"
+                    },
+                    "logging": {
+                        "title": "Enable Logging",
+                        "type": "boolean"
+                    },
+                    "buttons": {
+                        "type": "array",
+                        "title": "Buttons",
+                        "items": {
+                            "$ref": "#/definitions/button_obj"
+                        }
+                    }
+                },
+                "required": [
+                    "id"
+                ]
+            },
+            "button_obj": {
+                "type": "object",
+                "title": "Button Configuration",
+                "properties": {
+                    "ignore": {
+                        "title": "Ignore this button",
+                        "type": "boolean"
+                    },
+                    "singlePressOnly": {
+                        "title": "Restrict to single press",
+                        "type": "boolean"
+                    },
+                    "id": {
+                        "title": "Button Id",
+                        "type": "integer",
+                        "minimum": 1,
+                        "required": true
+                    },
+                    "name": {
+                        "title": "Button Name",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id"
+                ]
+            }
+        },
+        "type": "object",
+        "properties": {
+            "name": {
+                "title": "Plugin Name - The name used to identify this plugin.",
+                "type": "string",
+                "default": "RA2"
+            },
+            "host": {
+                "title": "Host - Hostname or IP Address of the RA2 Select bridge",
+                "type": "string"
+            },
+            "username": {
+                "title": "Username",
+                "type": "string",
+                "default": "lutron"
+            },
+            "password": {
+                "title": "Password",
+                "type": "string",
+                "default": "integration"
+            },
+            "pressTimeout": {
+                "title": "Single Press Timeout (ms)",
+                "type": "integer"
+            },
+            "longTimeout": {
+                "title": "Long Press Timeout (ms)",
+                "type": "integer"
+            },
+            "devices": {
+                "title": "Devices",
+                "type": "array",
+                "items": {
+                    "$ref": "#/definitions/device_obj",
+                    "extendRefs": true
+                }
+            }
+        },
+        "required": [
+            "name",
+            "host",
+            "username",
+            "password"
+        ]
+    }
+}
