@@ -2,3 +2,5 @@
 node_modules
 plugin.code-workspace
 .DS_Store
+*.bk
+*.bk2
