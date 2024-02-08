@@ -6,113 +6,64 @@
     "schema": {
         "definitions": {
             "device_obj": {
-                "type": "object",
                 "title": "Device Configuration",
+                "type": "object",
                 "properties": {
-                    "ignore": {
-                        "title": "Ignore this device",
-                        "type": "boolean"
-                    },
-                    "id": {
-                        "title": "Device Id",
-                        "type": "integer",
-                        "minimum": 1
-                    },
-                    "name": {
-                        "title": "Device Name",
-                        "type": "string"
-                    },
-                    "singlePressOnly": {
-                        "title": "Restrict to single press",
-                        "type": "boolean"
-                    },
-                    "logging": {
-                        "title": "Enable Logging",
-                        "type": "boolean"
-                    },
+                    "ignore": { "type": "boolean" },
+                    "singlePressOnly": { "type": "boolean" },
+                    "logging": { "type": "boolean" },
+                    "id": { "type": "integer", "minimum": 1 },
+                    "name": { "type": "string" },
                     "buttons": {
-                        "type": "array",
                         "title": "Buttons",
-                        "items": {
-                            "$ref": "#/definitions/button_obj"
-                        }
+                        "type": "array",
+                        "items": { "$ref": "#/definitions/button_obj" }
                     }
                 },
-                "required": [
-                    "id"
-                ]
+                "required": ["id"]
             },
             "button_obj": {
-                "type": "object",
                 "title": "Button Configuration",
+                "type": "object",
                 "properties": {
-                    "ignore": {
-                        "title": "Ignore this button",
-                        "type": "boolean"
-                    },
-                    "singlePressOnly": {
-                        "title": "Restrict to single press",
-                        "type": "boolean"
-                    },
-                    "id": {
-                        "title": "Button Id",
-                        "type": "integer",
-                        "minimum": 1,
-                        "required": true
-                    },
-                    "name": {
-                        "title": "Button Name",
-                        "type": "string"
-                    }
+                    "ignore": { "type": "boolean" },
+                    "singlePressOnly": { "type": "boolean" },
+                    "id": { "type": "integer", "minimum": 1 },
+                    "name": { "type": "string" }
                 },
-                "required": [
-                    "id"
-                ]
+                "required": ["id"]
             }
         },
         "type": "object",
         "properties": {
             "name": {
-                "title": "Plugin Name - The name used to identify this plugin.",
                 "type": "string",
-                "default": "RA2"
+                "default": "RA2",
+                "description": "The name used to identify this plugin"
             },
             "host": {
-                "title": "Host - Hostname or IP Address of the RA2 Select bridge",
-                "type": "string"
-            },
-            "username": {
-                "title": "Username",
                 "type": "string",
-                "default": "lutron"
+                "format": "hostname",
+                "description": "Hostname / IP Address of the RA2 Select bridge"
             },
-            "password": {
-                "title": "Password",
-                "type": "string",
-                "default": "integration"
-            },
+            "username": { "type": "string", "default": "lutron" },
+            "password": { "type": "string", "default": "integration" },
             "pressTimeout": {
-                "title": "Single Press Timeout (ms)",
-                "type": "integer"
+                "type": "integer",
+                "description": "Single Press Timeout (ms)",
+                "placeholder": 500
             },
             "longTimeout": {
-                "title": "Long Press Timeout (ms)",
-                "type": "integer"
+                "type": "integer",
+                "description": "Long Press Timeout (ms)",
+                "placeholder": 2000
             },
             "devices": {
                 "title": "Devices",
                 "type": "array",
-                "items": {
-                    "$ref": "#/definitions/device_obj",
-                    "extendRefs": true
-                }
+                "items": { "$ref": "#/definitions/device_obj" }
             }
         },
-        "required": [
-            "name",
-            "host",
-            "username",
-            "password"
-        ]
+        "required": ["name", "host", "username", "password"]
     }
 }

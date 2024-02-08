@@ -50,6 +50,9 @@ Configuration of your hardware requires the [Lutron App](https://apps.apple.com/
 
 Follow the manufacturer's instructions to add the bridge to your HomeKit setup if necessary.
 
+> [!IMPORTANT]
+> Make sure that the RA2 Select has a static IP address assigned!
+
 ### Enable Telnet
 
 This plugin uses Telnet to communicate with the RA2 Select devices. By default, the RA2 Select has Telnet access disabled. To enable access:
@@ -125,32 +128,32 @@ Ex: config.json - After device and button discovery
 | Param         | Description   | Required  |
 | ------------- | ------------- | -------- |
 | platform | **Must be set to "RA2Select"** | yes |
-| host | The IP address or hostname of the RA2 Select | yes |
+| host | The IP address or hostname of the RA2 Select<br><br>**IMPORTANT**: Make sure that the RA2 Select has a static IP address assigned | yes |
 | username | RA2 Select username. The default setting for the RA2 Select is `lutron`. | yes |
 | password | RA2 Select password. The default setting for the RA2 Select is `integration` | yes |
-| devices | Array of devices (Pico remotes). See [Devices](#devices) section. |
-| pressTimeout | Timeout after first press before recognizing it as a single press, i.e., second press must be received within this interval to be considered a double-press event. In millis.<br><br>Defaults to 500. | no |
-| longTimeout | Timeout before a single press becomes a long press. If a release event is not received before this interval expires, then it is a long press. In millis.<br><br>Defaults to 2000. | no |
+| devices | Array of devices (Pico remotes). See [Devices](#devices) section. | |
+| pressTimeout | Timeout after first press before recognizing it as a single press, i.e., second press must be received within this interval to be considered a double-press event. In millis.<br><br>Defaults to 500. | |
+| longTimeout | Timeout before a single press becomes a long press. If a release event is not received before this interval expires, then it is a long press. In millis.<br><br>Defaults to 2000. | |
 
 #### Devices
 
 | Param         | Description   | Required  |
 | ------------- | ------------- | -------- |
 | id | Device identifier of the Pico remote | yes |
-| ignore | Ignore this device (true/false). An ignored device is excluded from logging and HomeKit exposure.<br><br>Defaults to false. | no |
+| ignore | Ignore this device (true/false). An ignored device is excluded from logging and HomeKit exposure.<br><br>Defaults to false. | |
 | name | Assigned device name. If 'ignore' is true, then this parameter is not required. If 'ignore' is false, then this parameter is required and becomes the name of the Stateless Programable Switch exposed to HomeKit. | if `ignore` is false |
-| buttons | Array of buttons. See [Buttons](#buttons) section. | no |
-| logging | Output detailed log information (true/false) for this device (and any of its buttons).<br><br>Defaults to false. | no |
-| singlePressOnly | All buttons on the device are configured to be single press only buttons and will imediately respond to a press without delay.<br><br>Defaults to false. | no |
+| buttons | Array of buttons. See [Buttons](#buttons) section. | |
+| logging | Output detailed log information (true/false) for this device (and any of its buttons).<br><br>Defaults to false. | |
+| singlePressOnly | All buttons on the device are configured to be single press only buttons and will imediately respond to a press without delay.<br><br>Defaults to false. | |
 
 #### Buttons
 
 | Param         | Description   | Required  |
 | ------------- | ------------- | -------- |
 | id | Button identifier of Pico remote button | yes |
-| ignore | Ignore this button (true/false). An ignored button is excluded from logging and HomeKit exposure.<br><br>Defaults to false. | no |
+| ignore | Ignore this button (true/false). An ignored button is excluded from logging and HomeKit exposure.<br><br>Defaults to false. | |
 | name | Assigned button name. If 'ignore' is true, then this parameter is not required. If 'ignore' is false, then this parameter is required and becomes the name of a button associated with the Stateless Programable Switch exposed to HomeKit.<br><br>Note: The Home app does not expose the names of the buttons, which simply show up as "Button 1", "Button 2", etc. in no particular order. Other apps (ex: Eve) expose the button names. | if `ignore` is false |
-| singlePressOnly | The buttons is configured to be a single press only button and will immediately respond to a press without delay.<br><br>Defaults to false. | no |
+| singlePressOnly | The buttons is configured to be a single press only button and will immediately respond to a press without delay.<br><br>Defaults to false. | |
 
 ## Identifying Device and Button Ids
 
