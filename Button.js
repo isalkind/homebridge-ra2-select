@@ -87,7 +87,7 @@ class Button {
         }
 
         if (typeof buttonConfig.name === 'undefined') {
-            throw new (`***** Device ${device.id} button ${buttonConfig.id}, name MUST be configured if not ignored`);
+            throw new Error(`***** Device ${device.id} button ${buttonConfig.id}, name MUST be configured if not ignored`);
         }
 
         this.name = buttonConfig.name;

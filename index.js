@@ -66,6 +66,19 @@ class RA2Select {
         this.host     = config['host'];
         this.devices  = config['devices'];
 
+        // Check for required values
+        if (typeof this.host === 'undefined' ||
+            typeof this.username === 'undefined' ||
+            typeof this.password === 'undefined') {
+            Log('**********');
+            Log('*** Check configuration. These values must be defined in config.json:');
+            Log(`*** \thost     - RA2 Select hostname / IP address [${this.host}]`);
+            Log(`*** \tusername - RA2 Select username [${this.username}]`);
+            Log(`*** \tpassword - RA2 Select password [${this.password}]`);
+            Log('**********');
+            return;
+        }
+
         Log('Loaded config');
 
         this.api = api;
@@ -149,14 +162,40 @@ class RA2Select {
 
         // Connection has closed, must be reopened
         connection.on('close', async () => {
-            Log('RCV CLOSE: reopening...');
+            Log('RCV CLOSE');
 
             // Re-establish a telnet connection to the RA2 bridge
-            await this.connection.destroy();
-            this.connection = await this.createConnection();
+            if (this.connection) {
+                Log('reopening...');
+                await this.connection.destroy();
+                this.connection = await this.createConnection();
+            }
         });
 
-        await connection.connect(params);
+        try {
+            await connection.connect(params);
+        } catch (error) {
+            Log(`CONNECT ERROR: name:${error.name} message:${error.message}`);
+            connection.destroy();
+            connection = null;
+
+            Log('**********');
+            Log('*** Check configuration and connectivity:');
+
+            let message = "";
+            if (error.message.startsWith('getaddrinfo ENOTFOUND')) {
+                Log(`*** \tCHECK HOST: \'${this.host}\' appears to be an unknown host.`);
+            } else if (error.message.startsWith('connect ECONNREFUSED')) {
+                Log(`*** \tCHECK HOST CONFIG: Telnet must be enabled on \'${this.host}\'. See documentation.`);
+            } else if (error.message === 'Cannot connect') {
+                Log(`*** \tCHECK HOST: Is \'${this.host}\' a valid host?`);
+                Log(`*** \tCHECK USERNAME/PASSWORD: Is \'${this.username}\'/\'${this.password}\' correct?`);
+            } else {
+                Log(`*** \tUNKNOWN ERROR. Check configuration values.`);
+            }
+
+            Log('**********');
+        }
 
         return connection;
     }
