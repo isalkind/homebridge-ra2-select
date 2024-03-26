@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file.
 
 ### Notable Changes
 
-* Use log.warning() for configuration issues. No functionality changes.
+* Use log.warn() for configuration issues. No functionality changes.
 
 ### Other Changes
 

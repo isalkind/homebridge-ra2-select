@@ -70,12 +70,12 @@ class RA2Select {
         if (typeof this.host === 'undefined' ||
             typeof this.username === 'undefined' ||
             typeof this.password === 'undefined') {
-            Log.warning('**********');
-            Log.warning('*** Check configuration. These values must be defined in config.json:');
-            Log.warning(`*** \thost     - RA2 Select hostname / IP address [${this.host}]`);
-            Log.warning(`*** \tusername - RA2 Select username [${this.username}]`);
-            Log.warning(`*** \tpassword - RA2 Select password [${this.password}]`);
-            Log.warning('**********');
+            Log.warn('**********');
+            Log.warn('*** Check configuration. These values must be defined in config.json:');
+            Log.warn(`*** \thost     - RA2 Select hostname / IP address [${this.host}]`);
+            Log.warn(`*** \tusername - RA2 Select username [${this.username}]`);
+            Log.warn(`*** \tpassword - RA2 Select password [${this.password}]`);
+            Log.warn('**********');
             return;
         }
 
@@ -175,25 +175,25 @@ class RA2Select {
         try {
             await connection.connect(params);
         } catch (error) {
-            Log.warning(`CONNECT ERROR: name:${error.name} message:${error.message}`);
+            Log.warn(`CONNECT ERROR: name:${error.name} message:${error.message}`);
             connection.destroy();
             connection = null;
 
-            Log.warning('**********');
-            Log.warning('*** Check configuration and connectivity:');
+            Log.warn('**********');
+            Log.warn('*** Check configuration and connectivity:');
 
             if (error.message.startsWith('getaddrinfo ENOTFOUND')) {
-                Log.warning(`*** \tCHECK HOST: \'${this.host}\' appears to be an unknown host.`);
+                Log.warn(`*** \tCHECK HOST: \'${this.host}\' appears to be an unknown host.`);
             } else if (error.message.startsWith('connect ECONNREFUSED')) {
-                Log.warning(`*** \tCHECK HOST CONFIG: Telnet must be enabled on \'${this.host}\'. See documentation.`);
+                Log.warn(`*** \tCHECK HOST CONFIG: Telnet must be enabled on \'${this.host}\'. See documentation.`);
             } else if (error.message === 'Cannot connect') {
-                Log.warning(`*** \tCHECK HOST: Is \'${this.host}\' a valid host?`);
-                Log.warning(`*** \tCHECK USERNAME/PASSWORD: Is \'${this.username}\'/\'${this.password}\' correct?`);
+                Log.warn(`*** \tCHECK HOST: Is \'${this.host}\' a valid host?`);
+                Log.warn(`*** \tCHECK USERNAME/PASSWORD: Is \'${this.username}\'/\'${this.password}\' correct?`);
             } else {
-                Log.warning(`*** \tUNKNOWN ERROR. Check configuration values.`);
+                Log.warn(`*** \tUNKNOWN ERROR. Check configuration values.`);
             }
 
-            Log.warning('**********');
+            Log.warn('**********');
         }
 
         return connection;
