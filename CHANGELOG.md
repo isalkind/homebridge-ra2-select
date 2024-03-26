@@ -3,6 +3,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.1.2 (2024-03-26)
+
+### Notable Changes
+
+* Use log.warning() for configuration issues. No functionality changes.
+
+### Other Changes
+
+* Now with [![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins).
+
 ## 1.1.1 (2024-02-11)
 
 ### Notable Changes

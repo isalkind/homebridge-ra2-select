@@ -1,5 +1,6 @@
 # homebridge-ra2-select
 
+[![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
 [![mit license](https://badgen.net/badge/license/MIT/red)](https://github.com/isalkind/homebridge-ra2-select/blob/master/LICENSE)
 [![npm](https://badgen.net/npm/dt/homebridge-ra2-select)](https://www.npmjs.com/package/homebridge-ra2-select)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/isalkind)
