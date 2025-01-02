@@ -94,7 +94,7 @@ class Pico {
             accessory.reachable = true;
         } else {
             LogDetail(this.logging, `register accessory: ${accessory.displayName}`);
-            api.registerPlatformAccessories(pluginName, platformName, [accessory]);
+            api.registerPlatformAccessories(PluginName, PlatformName, [accessory]);
         }
     }
 

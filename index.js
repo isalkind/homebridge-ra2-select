@@ -32,6 +32,8 @@ global.Log = null;
 global.LogDetail = null;
 global.Config = null;
 global.ExistingDevices = null;
+global.PluginName = null;
+global.PlatformName = null;
 
 module.exports = function(homebridge) {
     Homebridge = homebridge;
@@ -39,8 +41,10 @@ module.exports = function(homebridge) {
     Service = Homebridge.hap.Service;
     Characteristic = Homebridge.hap.Characteristic;
     UUIDGen = Homebridge.hap.uuid;
+    PluginName = pluginName;
+    PlatformName = platformName;
 
-    Homebridge.registerPlatform(pluginName, platformName, RA2Select, true);
+    Homebridge.registerPlatform(PluginName, PlatformName, RA2Select, true);
 }
 
 function logDetail(log, msg) {
@@ -247,7 +251,7 @@ class RA2Select {
             let accessory = ExistingDevices[uuid];
             if (accessory) {
                 Log(`Deregister Accessory: ${accessory.displayName} [${accessory.UUID}]`);
-                this.api.unregisterPlatformAccessories(pluginName, platformName, [accessory]);
+                this.api.unregisterPlatformAccessories(PluginName, PlatformName, [accessory]);
             }
         }
     }
