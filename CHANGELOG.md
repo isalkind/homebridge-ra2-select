@@ -3,6 +3,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.1.4 (2025-01-01)
+
+### Notable Changes
+
+* Address parameter scoping issue impacting users. ([#1](https://github.com/isalkind/homebridge-ra2-select/issues/1))
+
 ## 1.1.2 (2024-03-26)
 
 ### Notable Changes
