@@ -5,6 +5,9 @@
 [![npm](https://badgen.net/npm/dt/homebridge-ra2-select)](https://www.npmjs.com/package/homebridge-ra2-select)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/isalkind)
 
+> [!NOTE]  
+> Checked and tested for Homebridge v2.0 compatibility.
+
 A [Homebridge](https://homebridge.io) plugin for [**Lutron RA2 Select**](https://www.lutron.com/en-US/Products/Pages/WholeHomeSystems/RA2Select/Overview.aspx) devices. This plugin **does not** provide support for Lutron Radio RA2 devices.
 
 This plugin currently has one purpose: allow [**Lutron Pico remotes**](https://www.lutron.com/en-US/Products/Pages/Components/PicoWirelessController/Overview.aspx) to control HomeKit devices outside of the Lutron ecosystem.

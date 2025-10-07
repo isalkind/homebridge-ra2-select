@@ -3,6 +3,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.1.5 (2025-10-07)
+
+* Checked, tested, and marked compatible for Homebridge v2.0. Updated `package.json`. No code/functionality changes.
+
 ## 1.1.4 (2025-01-01)
 
 ### Notable Changes
